@@ -1,9 +1,25 @@
 package br.ufal.ic.p2.bikeshare;
 
+
+import br.ufal.ic.p2.bikeshare.models.Usuario;
+import br.ufal.ic.p2.bikeshare.services.GerenciadorSistema;
+import br.ufal.ic.p2.bikeshare.services.GerenciadorUsuarios;
+
+import java.util.Map;
+
 /**
  Facade
  */
 public class Facade {
+    private GerenciadorUsuarios gerenciadorUsuarios;
+    private GerenciadorSistema gerenciadorSistema;
+    private boolean encerrado = false;
+    private Map<String, Usuario> clientes;
+
+    public Facade(){
+        this.gerenciadorUsuarios = new GerenciadorUsuarios();
+        this.gerenciadorSistema = new GerenciadorSistema(this.gerenciadorUsuarios);
+    }
 
     private static final String AINDA_NAO_IMPLEMENTADO = "Ainda não implementado.";
 
@@ -11,34 +27,37 @@ public class Facade {
     // US1 - Cadastro de usuario
     // =====================================================================
 
-    public String criarUsuario(String nome, String email, String senha, String tipo, String cpfOuCnpj) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+    public String criarUsuario(String nome, String email, String senha, String tipo, String cpf) throws Exception {
+        //verificarEncerrado();
+        return gerenciadorUsuarios.criarUsuario(nome, email, senha, tipo, cpf, null, null, null, null);
     }
 
-    public String criarUsuario(String nome, String email, String senha, String tipo, String cnpj, String razaoSocial) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+    public String criarUsuario(String nome, String email, String senha, String tipo, String cnpj, String razaoSocial) throws Exception {
+//        verificarEncerrado();
+        return gerenciadorUsuarios.criarUsuario(nome, email, senha, tipo, null, cnpj, razaoSocial, null, null);
     }
 
-    public String criarUsuario(String nome, String email, String senha, String tipo, String cpf,
-                                String plano, String mensalidade) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+    public String criarUsuario(String nome, String email, String senha, String tipo, String cpf, String plano, String mensalidade) throws Exception {
+//        verificarEncerrado();
+        return gerenciadorUsuarios.criarUsuario(nome, email, senha, tipo, cpf, null, null, plano, mensalidade);
     }
 
-    public String criarUsuario(String nome, String email, String senha, String tipo, String cnpj,
-                                String razaoSocial, String plano, String mensalidade) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+    public String criarUsuario(String nome, String email, String senha, String tipo, String cnpj, String razaoSocial, String plano, String mensalidade) throws Exception {
+//        verificarEncerrado();
+        return gerenciadorUsuarios.criarUsuario(nome, email, senha, tipo, null, cnpj, razaoSocial, plano, mensalidade);
     }
-
     // =====================================================================
     // US2 - Consulta de usuario
     // =====================================================================
 
-    public String getAtributoUsuario(String usuario, String atributo) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+    public String getAtributoUsuario(String usuario, String atributo) throws Exception {
+//        verificarEncerrado();
+        return gerenciadorUsuarios.getAtributoUsuario(usuario, atributo);
     }
 
-    public String getUsuarioPorEmail(String email) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+    public String getUsuarioPorEmail(String email) throws Exception{
+//        verificarEncerrado();
+        return gerenciadorUsuarios.getUsuarioPorEmail(email);
     }
 
     // =====================================================================
@@ -193,11 +212,13 @@ public class Facade {
     // Ciclo de vida do sistema
     // =====================================================================
 
-    public void zerarSistema() {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+    public void zerarSistema() throws Exception {
+
+        gerenciadorSistema.zerarSistema();
     }
 
-    public void encerrarSistema() {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+    public void encerrarSistema() throws Exception {
+        gerenciadorSistema.encerrarSistema();
     }
+
 }
