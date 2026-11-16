@@ -5,11 +5,23 @@ import br.ufal.ic.p2.bikeshare.models.*;
 import br.ufal.ic.p2.bikeshare.validacao.ValidadorUsuario;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class GerenciadorUsuarios {
-    private Map<String, Usuario> usuarios = new LinkedHashMap<>();
-    private int contadorId = 1;
+    private Map<String, Usuario> usuarios;
+    private int contadorId;
+
+
+    public GerenciadorUsuarios(Map<String, Usuario> usuarios, int contadorId){
+        this.usuarios = usuarios;
+        this.contadorId = contadorId;
+    }
+
+    public Map<String, Usuario> getUsuarios(){return usuarios;}
+    public int getContadorId(){return contadorId;}
+
+
 
     public String criarUsuario(String nome, String email, String senha, String tipo, String cpf, String cnpj, String razaoSocial, String plano, String mensalidade) throws Exception {
 
@@ -92,6 +104,26 @@ public class GerenciadorUsuarios {
             case "cpf": return usuario.getCpf();
             case "cnpj": return usuario.getCnpj();
             case "razaoSocial": return usuario.getRazaoSocial();
+            case "alugualAtivo":
+                return "nenhum";
+            case "totalPendencias":
+                return String.format(java.util.Locale.GERMANY, "%.2f", 0.0);
+            case "numeroCartao":
+            case "validadeCartao":
+                if(!"cartao".equals(usuario.getMetodoPagamento())){
+                    throw new UsuarioNaoUsaCartaoException();
+                }
+                return "dados_cartao";
+            case "chavePix":
+                if(!"pix".equals(usuario.getMetodoPagamento())){
+                    throw new UsuarioNaoUsaPixException();
+                }
+                return "dados_pix";
+            case "saldo":
+                if(!"saldo".equals(usuario.getMetodoPagamento())){
+                    throw new UsuarioNaoUsaSaldoException();
+                }
+                return String.format(Locale.GERMANY, "%.2f", 0.0);
             default:
                 throw new AtributoNaoExisteException();
         }
@@ -103,7 +135,7 @@ public class GerenciadorUsuarios {
         }
 
         for(Usuario usuario : usuarios.values()){
-            if(usuario.getEmail().equalsIgnoreCase(email)){
+            if(usuario.getEmail().equalsIgnoreCase(email.trim())){
                 return usuario.getId();
             }
         }

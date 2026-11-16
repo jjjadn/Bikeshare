@@ -1,7 +1,9 @@
 package br.ufal.ic.p2.bikeshare;
 
 
+import br.ufal.ic.p2.bikeshare.models.Sistema;
 import br.ufal.ic.p2.bikeshare.models.Usuario;
+import br.ufal.ic.p2.bikeshare.persistencia.PersistenciaXML;
 import br.ufal.ic.p2.bikeshare.services.GerenciadorSistema;
 import br.ufal.ic.p2.bikeshare.services.GerenciadorUsuarios;
 
@@ -17,7 +19,9 @@ public class Facade {
     private Map<String, Usuario> clientes;
 
     public Facade(){
-        this.gerenciadorUsuarios = new GerenciadorUsuarios();
+        Sistema sistema = PersistenciaXML.carregar();
+
+        this.gerenciadorUsuarios = new GerenciadorUsuarios(sistema.getUsuarios(), sistema.getContadorId());
         this.gerenciadorSistema = new GerenciadorSistema(this.gerenciadorUsuarios);
     }
 
