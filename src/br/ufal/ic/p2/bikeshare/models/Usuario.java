@@ -13,7 +13,10 @@ public abstract class Usuario implements Serializable {
     private String tipo;
     private boolean estado;
     private Plano plano;
-    private String metodoPagamento;
+    private MetodoPagamento metodoPagamento;
+    private PagamentoSaldo contaSaldo;
+
+
 
 
 
@@ -44,10 +47,12 @@ public abstract class Usuario implements Serializable {
     public Plano getPlano(){
         return plano;
     }
-    public String getMetodoPagamento(){
+    public MetodoPagamento getMetodoPagamento(){
         return metodoPagamento;
     }
     public boolean getEstado(){return estado;}
+    public PagamentoSaldo getContaSaldo() { return contaSaldo; }
+
 
     public void setId(String id) {
         this.id = id;
@@ -71,7 +76,7 @@ public abstract class Usuario implements Serializable {
         this.plano = plano;
     }
 
-    public void setMetodoPagamento(String metodoPagamento){
+    public void setMetodoPagamento(MetodoPagamento metodoPagamento){
         this.metodoPagamento = metodoPagamento;
     }
 
@@ -81,6 +86,7 @@ public abstract class Usuario implements Serializable {
     public abstract String getCpf() throws Exception;
     public abstract String getCnpj() throws Exception;
     public abstract String getRazaoSocial()throws Exception;
+    public void setContaSaldo(PagamentoSaldo contaSaldo) { this.contaSaldo = contaSaldo; }
 }
 
 

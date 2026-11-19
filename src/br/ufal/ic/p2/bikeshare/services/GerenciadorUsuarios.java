@@ -2,6 +2,7 @@ package br.ufal.ic.p2.bikeshare.services;
 
 import br.ufal.ic.p2.bikeshare.exception.*;
 import br.ufal.ic.p2.bikeshare.models.*;
+import br.ufal.ic.p2.bikeshare.persistencia.PersistenciaXML;
 import br.ufal.ic.p2.bikeshare.validacao.ValidadorUsuario;
 
 import java.util.LinkedHashMap;
@@ -13,7 +14,7 @@ public class GerenciadorUsuarios {
     private int contadorId;
 
 
-    public GerenciadorUsuarios(Map<String, Usuario> usuarios, int contadorId){
+    public GerenciadorUsuarios(Map<String, Usuario> usuarios, int contadorId) {
         this.usuarios = usuarios;
         this.contadorId = contadorId;
     }
@@ -95,7 +96,6 @@ public class GerenciadorUsuarios {
             case "email": return usuario.getEmail();
             case "senha": return usuario.getSenha();
             case "estado": return "ativo";
-            case "metodoPagamento": return usuario.getMetodoPagamento() == null ? "nenhum" : usuario.getMetodoPagamento();
             case "tipo": return usuario.getTipo();
             case "plano": return usuario.getPlano().getNome();
             case "mensalidade":
@@ -104,31 +104,29 @@ public class GerenciadorUsuarios {
             case "cpf": return usuario.getCpf();
             case "cnpj": return usuario.getCnpj();
             case "razaoSocial": return usuario.getRazaoSocial();
-            case "alugualAtivo":
+            case "aluguelAtivo":
                 return "nenhum";
             case "totalPendencias":
                 return String.format(java.util.Locale.GERMANY, "%.2f", 0.0);
+            case "metodoPagamento": return usuario.getMetodoPagamento() == null ? "nenhum" : usuario.getMetodoPagamento().getTipo();
             case "numeroCartao":
+                if (usuario.getMetodoPagamento() == null) throw new UsuarioNaoUsaCartaoException();
+                return usuario.getMetodoPagamento().getNumero();
             case "validadeCartao":
-                if(!"cartao".equals(usuario.getMetodoPagamento())){
-                    throw new UsuarioNaoUsaCartaoException();
-                }
-                return "dados_cartao";
+                if (usuario.getMetodoPagamento() == null) throw new UsuarioNaoUsaCartaoException();
+                return usuario.getMetodoPagamento().getValidade();
             case "chavePix":
-                if(!"pix".equals(usuario.getMetodoPagamento())){
-                    throw new UsuarioNaoUsaPixException();
-                }
-                return "dados_pix";
+                if (usuario.getMetodoPagamento() == null) throw new UsuarioNaoUsaPixException();
+                return usuario.getMetodoPagamento().getChave();
             case "saldo":
-                if(!"saldo".equals(usuario.getMetodoPagamento())){
-                    throw new UsuarioNaoUsaSaldoException();
-                }
-                return String.format(Locale.GERMANY, "%.2f", 0.0);
+                if (usuario.getMetodoPagamento() == null) throw new UsuarioNaoUsaSaldoException();
+                return String.format(java.util.Locale.GERMANY, "%.2f", usuario.getMetodoPagamento().getSaldo());
             default:
                 throw new AtributoNaoExisteException();
         }
 
     }
+
     public String getUsuarioPorEmail(String email) throws Exception{
         if(email == null || email.trim().isEmpty()){
             throw new EmailNaoNuloException();
@@ -143,12 +141,106 @@ public class GerenciadorUsuarios {
 
     }
 
-    public void zerarSistema() {
-        this.usuarios.clear();
-        this.contadorId = 1;
+
+
+
+
+
+
+    public void alterarUsuario(String id, String atributo, String valor, String p4, String p5) throws Exception {
+
+        Usuario usuario = buscarUsuario(id);
+
+        if (!"metodoPagamento".equals(atributo) && (p4 != null || p5 != null)) {
+            throw new AtributoNaoPodeSerAlteradoException();
+        }
+
+        ValidadorUsuario.validarAlteracao(atributo, valor, p4, p5);
+
+
+        switch (atributo) {
+            case "nome":
+                usuario.setNome(valor);
+                break;
+
+            case "email":
+
+                for (Usuario u : usuarios.values()) {
+                    if (!u.getId().equals(id) && u.getEmail().equalsIgnoreCase(valor)) {
+                        throw new EmailJaCadastradoException();
+                    }
+                }
+                usuario.setEmail(valor);
+                break;
+
+            case "senha":
+                usuario.setSenha(valor);
+                break;
+
+            case "plano":
+                if ("assinante".equals(valor)) {
+
+
+                    if (!"assinante".equals(usuario.getPlano().getNome())) {
+                        usuario.setPlano(new PlanoAssinante(30.0));
+                    }
+                } else if ("avulso".equals(valor)) {
+                    usuario.setPlano(new PlanoAvulso());
+                }
+                break;
+
+            case "metodoPagamento":
+                alterarMetodoPagamento(usuario, valor, p4, p5);
+                break;
+
+            case "saldo":
+
+                if (usuario.getMetodoPagamento() == null || !"saldoPreCarregado".equals(usuario.getMetodoPagamento().getTipo())) {
+                    throw new UsuarioNaoUsaSaldoException();
+                }
+
+                double v = Double.parseDouble(valor.replace(",", "."));
+                usuario.getMetodoPagamento().adicionarSaldo(v);
+                break;
+
+
+            case "tipo":
+            case "estado":
+            case "totalPendencias":
+            case "aluguelAtivo":
+            default:
+                throw new AtributoNaoPodeSerAlteradoException();
+        }
+    }
+
+    private void alterarMetodoPagamento(Usuario usuario, String tipo, String p4, String p5) {
+        switch (tipo) {
+
+            case "cartao":
+                usuario.setMetodoPagamento(new PagamentoCartao(p4, p5));
+                break;
+
+            case "pix":
+                usuario.setMetodoPagamento(new PagamentoPix(p4));
+                break;
+
+            case "saldoPreCarregado":
+
+                if (usuario.getContaSaldo() == null) {
+                    usuario.setContaSaldo(new PagamentoSaldo());
+                }
+
+                usuario.setMetodoPagamento(usuario.getContaSaldo());
+                break;
+        }
     }
 
 
 
+
+    public void zerarSistema() {
+        this.usuarios.clear();
+        this.contadorId = 1;
+    }
 
 }
