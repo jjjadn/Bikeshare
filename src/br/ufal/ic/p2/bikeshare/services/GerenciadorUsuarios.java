@@ -235,7 +235,12 @@ public class GerenciadorUsuarios {
         }
     }
 
+    public void removerUsuario(String id) throws Exception {
+        buscarUsuario(id);
 
+        usuarios.remove(id);
+
+    }
 
 
     public void zerarSistema() {

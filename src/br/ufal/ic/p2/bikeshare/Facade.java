@@ -90,10 +90,10 @@ public class Facade {
     // US4 - Remocao de usuario
     // =====================================================================
 
-    public void removerUsuario(String usuario) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+    public void removerUsuario(String id) throws Exception {
+        gerenciadorSistema.verificarEncerrado();
+        gerenciadorUsuarios.removerUsuario(id);
     }
-
     // =====================================================================
     // US5 - Cadastro de estacao
     // =====================================================================
