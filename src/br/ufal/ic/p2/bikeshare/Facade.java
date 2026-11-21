@@ -4,6 +4,8 @@ package br.ufal.ic.p2.bikeshare;
 import br.ufal.ic.p2.bikeshare.models.Sistema;
 import br.ufal.ic.p2.bikeshare.models.Usuario;
 import br.ufal.ic.p2.bikeshare.persistencia.PersistenciaXML;
+import br.ufal.ic.p2.bikeshare.services.GerenciadorBicicleta;
+import br.ufal.ic.p2.bikeshare.services.GerenciadorEstacao;
 import br.ufal.ic.p2.bikeshare.services.GerenciadorSistema;
 import br.ufal.ic.p2.bikeshare.services.GerenciadorUsuarios;
 
@@ -15,14 +17,20 @@ import java.util.Map;
 public class Facade {
     private GerenciadorUsuarios gerenciadorUsuarios;
     private GerenciadorSistema gerenciadorSistema;
+    private GerenciadorEstacao gerenciadorEstacao;
+    private GerenciadorBicicleta gerenciadorBicicleta;
     private boolean encerrado = false;
     private Map<String, Usuario> clientes;
 
-    public Facade(){
+    public Facade() {
         Sistema sistema = PersistenciaXML.carregar();
 
+
         this.gerenciadorUsuarios = new GerenciadorUsuarios(sistema.getUsuarios(), sistema.getContadorId());
-        this.gerenciadorSistema = new GerenciadorSistema(this.gerenciadorUsuarios);
+        this.gerenciadorEstacao = new GerenciadorEstacao(sistema.getEstacoes());
+        this.gerenciadorEstacao.setContadorId(sistema.getContadorEstacaoId());
+        this.gerenciadorBicicleta = new GerenciadorBicicleta(sistema.getBicicletas(), this.gerenciadorEstacao);
+        this.gerenciadorSistema = new GerenciadorSistema(this.gerenciadorUsuarios, this.gerenciadorEstacao, this.gerenciadorBicicleta);
     }
 
     private static final String AINDA_NAO_IMPLEMENTADO = "Ainda não implementado.";
@@ -98,44 +106,51 @@ public class Facade {
     // US5 - Cadastro de estacao
     // =====================================================================
 
-    public String criarEstacao(String nome, String endereco, String capacidade) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+    public String criarEstacao(String nome, String endereco, String capacidade) throws Exception {
+        gerenciadorSistema.verificarEncerrado();
+        return gerenciadorEstacao.criarEstacao(nome, endereco, capacidade);
     }
 
     // =====================================================================
     // US6 - Gestao de bicicletas na estacao
     // =====================================================================
 
-    public void adicionarBicicleta(String estacao, String bicicleta, String tipo) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+    public void adicionarBicicleta(String estacao, String bicicleta, String tipo) throws Exception {
+    //    gerenciadorSistema.verificarEncerrado();
+        gerenciadorBicicleta.adicionarBicicleta(estacao, bicicleta, tipo, null);
     }
 
-    public void adicionarBicicleta(String estacao, String bicicleta, String tipo, String nivelBateria) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+    public void adicionarBicicleta(String estacao, String bicicleta, String tipo, String nivelBateria) throws Exception{
+        gerenciadorBicicleta.adicionarBicicleta(estacao, bicicleta, tipo, nivelBateria);
     }
 
-    public void removerBicicleta(String estacao, String bicicleta) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+    public void removerBicicleta(String estacao, String bicicleta) throws Exception {
+    //      gerenciadorSistema.verificarEncerrado();
+        gerenciadorBicicleta.removerBicicleta(estacao, bicicleta);
     }
 
-    public String getAtributoBicicleta(String bicicleta, String atributo) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+    public String getAtributoBicicleta(String bicicleta, String atributo) throws Exception {
+//        gerenciadorSistema.verificarEncerrado();
+        return gerenciadorBicicleta.getAtributoBicicleta(bicicleta, atributo);
     }
 
     // =====================================================================
     // US7 - Consulta de disponibilidade
     // =====================================================================
 
-    public String getBicicletasDisponiveis(String estacao) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+    public String getVagasDisponiveis(String estacaoId) throws Exception {
+//        gerenciadorSistema.verificarEncerrado();
+        return gerenciadorEstacao.getVagasDisponiveis(estacaoId);
     }
 
-    public String getVagasDisponiveis(String estacao) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+    public String getBicicletasDisponiveis(String estacaoId) throws Exception {
+//        gerenciadorSistema.verificarEncerrado();
+        return gerenciadorEstacao.getBicicletasDisponiveis(estacaoId);
     }
 
-    public String getEstadoBicicleta(String bicicleta) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+    public String getEstadoBicicleta(String bicicleta) throws Exception {
+//        gerenciadorSistema.verificarEncerrado();
+        return gerenciadorBicicleta.getEstadoBicicleta(bicicleta);
     }
 
     // =====================================================================
