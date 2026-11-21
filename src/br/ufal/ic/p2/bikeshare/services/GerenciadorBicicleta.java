@@ -31,8 +31,8 @@ public class GerenciadorBicicleta {
             throw new EstacaoSemVagasException();
         }
 
-
         Bicicleta novaBike;
+
         if ("convencional".equals(tipo)) {
             novaBike = new BicicletaConvencional(bikeId, estacaoId);
         } else {
@@ -42,6 +42,8 @@ public class GerenciadorBicicleta {
         bicicletas.put(bikeId, novaBike);
         estacao.getBicicletasIds().add(bikeId);
     }
+
+
 
     public void removerBicicleta(String estacaoId, String bikeId) throws Exception {
 
@@ -87,6 +89,32 @@ public class GerenciadorBicicleta {
         Bicicleta bike = bicicletas.get(bikeId);
         if (bike == null) throw new BicicletaNaoExisteException();
         return bike.getEstado();
+    }
+
+
+    public String getBicicletasDisponiveis(String estacaoId) throws Exception {
+        Estacao estacao = gerenciadorEstacao.buscarEstacao(estacaoId);
+
+        int disponiveis = 0;
+
+
+        for (String bikeId : estacao.getBicicletasIds()) {
+            Bicicleta b = bicicletas.get(bikeId);
+
+            if (b != null && "disponivel".equals(b.getEstado())) {
+
+                if ("convencional".equals(b.getTipo())) {
+                    disponiveis++;
+                } else {
+
+                    if (Integer.parseInt(b.getNivelBateria()) > 0) {
+                        disponiveis++;
+                    }
+                }
+            }
+        }
+
+        return String.valueOf(disponiveis);
     }
 
     public void zerarSistema() {

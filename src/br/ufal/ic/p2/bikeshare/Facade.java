@@ -145,7 +145,7 @@ public class Facade {
 
     public String getBicicletasDisponiveis(String estacaoId) throws Exception {
 //        gerenciadorSistema.verificarEncerrado();
-        return gerenciadorEstacao.getBicicletasDisponiveis(estacaoId);
+        return gerenciadorBicicleta.getBicicletasDisponiveis(estacaoId);
     }
 
     public String getEstadoBicicleta(String bicicleta) throws Exception {

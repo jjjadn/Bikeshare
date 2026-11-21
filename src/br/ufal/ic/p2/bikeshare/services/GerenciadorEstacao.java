@@ -58,10 +58,6 @@ public class GerenciadorEstacao {
         return String.valueOf(estacao.getCapacidade());
     }
 
-    public String getBicicletasDisponiveis(String id) throws Exception {
-        buscarEstacao(id);
-        return "0";
-    }
 
     public void zerarSistema() {
         estacoes.clear();
