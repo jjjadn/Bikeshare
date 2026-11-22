@@ -55,7 +55,7 @@ public class GerenciadorEstacao {
 
     public String getVagasDisponiveis(String id) throws Exception {
         Estacao estacao = buscarEstacao(id);
-        return String.valueOf(estacao.getCapacidade());
+        return String.valueOf(estacao.getVagasDisponiveis());
     }
 
 

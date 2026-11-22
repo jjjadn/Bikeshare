@@ -107,8 +107,10 @@ public class GerenciadorBicicleta {
                     disponiveis++;
                 } else {
 
-                    if (Integer.parseInt(b.getNivelBateria()) > 0) {
+                    int bateria = Integer.parseInt(b.getNivelBateria());
+                    if (bateria >= 15) {
                         disponiveis++;
+
                     }
                 }
             }
