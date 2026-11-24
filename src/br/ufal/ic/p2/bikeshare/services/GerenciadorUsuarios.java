@@ -74,7 +74,7 @@ public class GerenciadorUsuarios {
         }
     }
 
-    private Usuario buscarUsuario(String id) throws Exception{
+    public Usuario buscarUsuario(String id) throws Exception{
         if(id == null || id.trim().isEmpty()){
             throw new IdentificacaoNaoNulaException();
         }
@@ -95,7 +95,7 @@ public class GerenciadorUsuarios {
             case "nome": return usuario.getNome();
             case "email": return usuario.getEmail();
             case "senha": return usuario.getSenha();
-            case "estado": return "ativo";
+            case "estado": return usuario.getEstado();
             case "tipo": return usuario.getTipo();
             case "plano": return usuario.getPlano().getNome();
             case "mensalidade":
@@ -104,10 +104,9 @@ public class GerenciadorUsuarios {
             case "cpf": return usuario.getCpf();
             case "cnpj": return usuario.getCnpj();
             case "razaoSocial": return usuario.getRazaoSocial();
-            case "aluguelAtivo":
-                return "nenhum";
+            case "aluguelAtivo": return usuario.getAluguelAtivo() == null ? "nenhum" : usuario.getAluguelAtivo();
             case "totalPendencias":
-                return String.format(java.util.Locale.GERMANY, "%.2f", 0.0);
+                return String.format(java.util.Locale.GERMANY, "%.2f", usuario.getTotalPendencias());
             case "metodoPagamento": return usuario.getMetodoPagamento() == null ? "nenhum" : usuario.getMetodoPagamento().getTipo();
             case "numeroCartao":
                 if (usuario.getMetodoPagamento() == null) throw new UsuarioNaoUsaCartaoException();
@@ -236,10 +235,13 @@ public class GerenciadorUsuarios {
     }
 
     public void removerUsuario(String id) throws Exception {
-        buscarUsuario(id);
+        Usuario usuario = buscarUsuario(id);
+
+        if (usuario.getAluguelAtivo() != null) {
+            throw new RemoverUsuarioComAluguelException();
+        }
 
         usuarios.remove(id);
-
     }
 
 

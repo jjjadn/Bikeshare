@@ -63,19 +63,14 @@ public class GerenciadorBicicleta {
     }
 
     public String getAtributoBicicleta(String bikeId, String atributo) throws Exception {
+        Bicicleta bike = buscarBicicleta(bikeId);
 
-        if (bikeId == null || bikeId.trim().isEmpty()) {
-            throw new IdentificacaoBicicletaNaoNulaException();
-        }
-
-        Bicicleta bike = bicicletas.get(bikeId);
-
-        if (bike == null) throw new BicicletaNaoExisteException();
 
         switch (atributo) {
             case "tipo": return bike.getTipo();
             case "estado": return bike.getEstado();
-            case "estacao": return bike.getEstacaoId();
+            case "estacao":
+                return bike.getEstacaoId() == null ? "nenhuma" : bike.getEstacaoId();
             case "nivelBateria": return bike.getNivelBateria();
             default: throw new AtributoNaoExisteException();
         }
@@ -83,14 +78,15 @@ public class GerenciadorBicicleta {
 
 
     public String getEstadoBicicleta(String bikeId) throws Exception {
-        if (bikeId == null || bikeId.trim().isEmpty()) {
-            throw new IdentificacaoBicicletaNaoNulaException();
-        }
-        Bicicleta bike = bicicletas.get(bikeId);
-        if (bike == null) throw new BicicletaNaoExisteException();
-        return bike.getEstado();
+        return buscarBicicleta(bikeId).getEstado();
     }
 
+    public Bicicleta buscarBicicleta(String bikeId) throws Exception {
+        if (bikeId == null || bikeId.trim().isEmpty()) throw new IdentificacaoBicicletaNaoNulaException();
+        Bicicleta b = bicicletas.get(bikeId);
+        if (b == null) throw new BicicletaNaoExisteException();
+        return b;
+    }
 
     public String getBicicletasDisponiveis(String estacaoId) throws Exception {
         Estacao estacao = gerenciadorEstacao.buscarEstacao(estacaoId);

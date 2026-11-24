@@ -9,11 +9,13 @@ public class GerenciadorSistema {
     private GerenciadorUsuarios gerenciadorUsuarios;
     private GerenciadorEstacao gerenciadorEstacao;
     private GerenciadorBicicleta gerenciadorBicicleta;
+    private GerenciadorAluguel gerenciadorAluguel;
 
-    public GerenciadorSistema(GerenciadorUsuarios gerenciadorUsuarios, GerenciadorEstacao gerenciadorEstacao, GerenciadorBicicleta gerenciadorBicicleta) {
+    public GerenciadorSistema(GerenciadorUsuarios gerenciadorUsuarios, GerenciadorEstacao gerenciadorEstacao, GerenciadorBicicleta gerenciadorBicicleta, GerenciadorAluguel gerenciadorAluguel) {
         this.gerenciadorUsuarios = gerenciadorUsuarios;
         this.gerenciadorEstacao = gerenciadorEstacao;
         this.gerenciadorBicicleta = gerenciadorBicicleta;
+        this.gerenciadorAluguel = gerenciadorAluguel;
     }
 
     public void verificarEncerrado() throws Exception {
@@ -27,6 +29,7 @@ public class GerenciadorSistema {
         gerenciadorUsuarios.zerarSistema();
         gerenciadorEstacao.zerarSistema();
         gerenciadorBicicleta.zerarSistema();
+        gerenciadorAluguel.zerarSistema();
         PersistenciaXML.apagar();
     }
 
@@ -37,7 +40,8 @@ public class GerenciadorSistema {
                 gerenciadorUsuarios.getContadorId(),
                 gerenciadorEstacao.getEstacoes(),
                 gerenciadorEstacao.getContadorId(),
-                gerenciadorBicicleta.getBicicletas()
+                gerenciadorBicicleta.getBicicletas(),
+                gerenciadorAluguel.getAlugueis(), gerenciadorAluguel.getContadorId()
         );
 
         PersistenciaXML.salvar(sistema);

@@ -11,10 +11,12 @@ public abstract class Usuario implements Serializable {
     private String email;
     private String senha;
     private String tipo;
-    private boolean estado;
+    private String estado = "ativo";
     private Plano plano;
     private MetodoPagamento metodoPagamento;
     private PagamentoSaldo contaSaldo;
+    private String aluguelAtivo;
+    private double totalPendencias = 0.0;
 
 
 
@@ -29,6 +31,7 @@ public abstract class Usuario implements Serializable {
         this.senha = senha;
         this.plano = plano;
         this.metodoPagamento = null;
+        this.aluguelAtivo = null;
     }
 
     public String getId() {
@@ -50,8 +53,10 @@ public abstract class Usuario implements Serializable {
     public MetodoPagamento getMetodoPagamento(){
         return metodoPagamento;
     }
-    public boolean getEstado(){return estado;}
+    public String getEstado(){return estado;}
     public PagamentoSaldo getContaSaldo() { return contaSaldo; }
+    public String getAluguelAtivo(){return aluguelAtivo;}
+    public double getTotalPendencias(){return totalPendencias;}
 
 
     public void setId(String id) {
@@ -80,13 +85,15 @@ public abstract class Usuario implements Serializable {
         this.metodoPagamento = metodoPagamento;
     }
 
-    public void setEstado(Boolean estado){this.estado = estado;}
 
     public abstract String getTipo();
     public abstract String getCpf() throws Exception;
     public abstract String getCnpj() throws Exception;
     public abstract String getRazaoSocial()throws Exception;
     public void setContaSaldo(PagamentoSaldo contaSaldo) { this.contaSaldo = contaSaldo; }
+    public void setAluguelAtivo(String aluguelAtivo){this.aluguelAtivo = aluguelAtivo;}
+    public void setEstado(String estado){this.estado = estado;}
+    public void setTotalPendencias(double totalPendencias){this.totalPendencias = totalPendencias;}
 }
 
 

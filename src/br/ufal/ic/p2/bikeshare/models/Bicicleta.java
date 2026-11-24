@@ -21,4 +21,6 @@ public abstract class Bicicleta implements Serializable {
 
     public abstract String getTipo();
     public abstract String getNivelBateria() throws Exception;
+    public void setEstacaoId(String estacaoId) {this.estacaoId = estacaoId;
+    }
 }

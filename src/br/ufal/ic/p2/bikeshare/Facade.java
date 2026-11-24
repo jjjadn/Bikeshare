@@ -4,10 +4,7 @@ package br.ufal.ic.p2.bikeshare;
 import br.ufal.ic.p2.bikeshare.models.Sistema;
 import br.ufal.ic.p2.bikeshare.models.Usuario;
 import br.ufal.ic.p2.bikeshare.persistencia.PersistenciaXML;
-import br.ufal.ic.p2.bikeshare.services.GerenciadorBicicleta;
-import br.ufal.ic.p2.bikeshare.services.GerenciadorEstacao;
-import br.ufal.ic.p2.bikeshare.services.GerenciadorSistema;
-import br.ufal.ic.p2.bikeshare.services.GerenciadorUsuarios;
+import br.ufal.ic.p2.bikeshare.services.*;
 
 import java.util.Map;
 
@@ -19,18 +16,21 @@ public class Facade {
     private GerenciadorSistema gerenciadorSistema;
     private GerenciadorEstacao gerenciadorEstacao;
     private GerenciadorBicicleta gerenciadorBicicleta;
+    private GerenciadorAluguel gerenciadorAluguel;
     private boolean encerrado = false;
     private Map<String, Usuario> clientes;
 
     public Facade() {
-        Sistema sistema = PersistenciaXML.carregar();
 
+        Sistema sistema = PersistenciaXML.carregar();
 
         this.gerenciadorUsuarios = new GerenciadorUsuarios(sistema.getUsuarios(), sistema.getContadorId());
         this.gerenciadorEstacao = new GerenciadorEstacao(sistema.getEstacoes());
         this.gerenciadorEstacao.setContadorId(sistema.getContadorEstacaoId());
         this.gerenciadorBicicleta = new GerenciadorBicicleta(sistema.getBicicletas(), this.gerenciadorEstacao);
-        this.gerenciadorSistema = new GerenciadorSistema(this.gerenciadorUsuarios, this.gerenciadorEstacao, this.gerenciadorBicicleta);
+        this.gerenciadorAluguel = new GerenciadorAluguel(sistema.getAlugueis(), this.gerenciadorUsuarios, this.gerenciadorEstacao, this.gerenciadorBicicleta);
+        this.gerenciadorAluguel.setContadorId(sistema.getContadorAluguelId());
+        this.gerenciadorSistema = new GerenciadorSistema(this.gerenciadorUsuarios, this.gerenciadorEstacao, this.gerenciadorBicicleta, this.gerenciadorAluguel);
     }
 
     private static final String AINDA_NAO_IMPLEMENTADO = "Ainda não implementado.";
@@ -157,16 +157,17 @@ public class Facade {
     // US8 - Retirada de bicicleta
     // =====================================================================
 
-    public String retirarBicicleta(String usuario, String estacao, String bicicleta, String data) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+    public String retirarBicicleta(String usuario, String estacao, String bicicleta, String data) throws Exception {
+        gerenciadorSistema.verificarEncerrado();
+        return gerenciadorAluguel.retirarBicicleta(usuario, estacao, bicicleta, data);
     }
-
     // =====================================================================
     // US9 - Devolucao de bicicleta
     // =====================================================================
 
-    public void devolverBicicleta(String aluguel, String estacao, String data) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+    public void devolverBicicleta(String aluguel, String estacao, String data) throws Exception {
+        gerenciadorSistema.verificarEncerrado();
+        gerenciadorAluguel.devolverBicicleta(aluguel, estacao, data);
     }
 
     // =====================================================================
@@ -181,8 +182,9 @@ public class Facade {
         throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
     }
 
-    public String getAtributoAluguel(String aluguel, String atributo) {
-        throw new UnsupportedOperationException(AINDA_NAO_IMPLEMENTADO);
+    public String getAtributoAluguel(String aluguel, String atributo) throws Exception {
+        gerenciadorSistema.verificarEncerrado();
+        return gerenciadorAluguel.getAtributoAluguel(aluguel, atributo);
     }
 
     // =====================================================================

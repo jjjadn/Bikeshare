@@ -2,6 +2,7 @@ package br.ufal.ic.p2.bikeshare.persistencia;
 
 import br.ufal.ic.p2.bikeshare.models.Sistema;
 import java.io.*;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class PersistenciaXML {
@@ -22,12 +23,12 @@ public class PersistenciaXML {
         File f = new File(ARQUIVO);
 
         if (!f.exists() || f.length() == 0) {
-            return new Sistema(new LinkedHashMap<>(), 1, new LinkedHashMap<>(), 1, new LinkedHashMap<>());
+            return new Sistema(new LinkedHashMap<>(), 1, new LinkedHashMap<>(), 1, new LinkedHashMap<>(), new LinkedHashMap<>(), 1);
         }
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(f))) {
             return (Sistema) in.readObject();
         } catch (Exception e) {
-            return new Sistema(new LinkedHashMap<>(), 1, new LinkedHashMap<>(), 1, new LinkedHashMap<>());
+            return new Sistema(new LinkedHashMap<>(), 1, new LinkedHashMap<>(), 1, new LinkedHashMap<>(), new LinkedHashMap<>(), 1);
         }
     }
 
